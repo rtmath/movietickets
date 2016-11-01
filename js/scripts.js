@@ -37,16 +37,25 @@ function getPrice(userAge, time) {
 
 function displayConfirmation(ticket) {
   $(".movieTitle").text(ticket.movie);
-  $(".movieTime").text(ticket.time);
+  $(".movieTime").text(formatTime(ticket.time));
   $(".ticketPrice").text(ticket.price);
   $(".confirmation").show();
   $("#movieTimes").hide();
+
+  if (parseInt(ticket.userAge) < 14) {
+    $(".youthDiscount").show();
+  } else if (parseInt(ticket.userAge) > 59) {
+    $(".seniorDiscount").show();
+  }
+  if (parseInt(ticket.time) < 17) {
+    $(".matineeDiscount").show();
+  }
 }
 
 var movieList = [];
 var gAndPG = ["Trolls", "Kubo", "Storks"];
 var pg13AndR = ["Fantastic Beasts and Where to Find Them", "Doctor Strange", "Inferno"];
-var movieTimes = ["12:00:00", "13:10:00", "14:20:00", "15:30:00", "16:40:00", "17:50:00", "19:00:00", "20:10:00"];
+var movieTimes = ["12:00:00", "13:10:00", "14:20:00", "15:30:00", "16:40:00", "17:50:00", "19:00:00", "20:10:00", "23:00:00"];
 
 gAndPG.forEach(function(movie) {
   movieList.push(new Movie(movie, "gAndPG", movieTimes))
@@ -65,15 +74,10 @@ function enterAge(userAge) {
   }
 }
 
-$(function() {
-
-  var movie = ""; // = $("#");
-  var userAge = 1;
-  var selectedMovie = "";
-
-  gAndPG.forEach(function(movie) {
-    $("#movieForm").prepend('<div class="form-check">' +
-                        '<label class="form-check-label gAndPG">' +
+function populateMovieList(array, name) {
+  array.forEach(function(movie) {
+    $("#movieForm").prepend('<div class="form-check ' + name + '">' +
+                        '<label class="form-check-label">' +
                           '<input type="radio" class="form-check-input" value="' +
                           movie +
                           '" name="movies">' +
@@ -81,14 +85,24 @@ $(function() {
                         '</label>' +
                       '</div>')
   })
-  pg13AndR.forEach(function(movie) {
-    $("#movieForm").prepend('<div class="form-check pg13AndR">' +
-                        '<label class="form-check-label">' +
-                          '<input type="radio" class="form-check-input" name="movies">' +
-                          movie +
-                        '</label>' +
-                      '</div>')
-  })
+}
+
+function populateMovieTimes(movieTimes, userTime) {
+  movieTimes.forEach(function(movieTime) {
+    if (parseInt(userTime) <= parseInt(movieTime)) {
+      $("#movieTimeList").append('<option value="' + movieTime + '">' + formatTime(movieTime) + '</option');
+    }
+  });
+}
+
+$(function() {
+
+  var movie = ""; // = $("#");
+  var userAge = 1;
+  var selectedMovie = "";
+
+  populateMovieList(gAndPG, "gAndPG");
+  populateMovieList(pg13AndR, "pg13AndR");
 
   $("#ageForm").submit(function(event) {
     event.preventDefault();
@@ -100,18 +114,16 @@ $(function() {
     event.preventDefault();
     $(".error").hide();
     selectedMovie = $('input[name="movies"]:checked', '#movieForm').val();
-    if (selectedMovie) {
-      var userTime = $("#hour").val();
+    var userTime = $("#hour").val();
+    if (selectedMovie && (userTime < movieTimes[movieTimes.length-1])) {
       $(".userTime").text(formatTime(userTime));
       $("#movieTimes").show();
       $("#movieForm").hide();
-      movieTimes.forEach(function(movieTime) {
-        if (parseInt(userTime) < parseInt(movieTime)) {
-          $("#movieTimeList").append('<option class=value="' + parseInt(movieTime) + '">' + formatTime(movieTime) + '</option');
-        }
-      });
-    } else {
-      $(".error").show();
+      populateMovieTimes(movieTimes, userTime);
+    } else if (userTime > movieTimes[movieTimes.length-1]) {
+      $(".error-too-late").show();
+    } else if (!selectedMovie) {
+      $(".error-null").show();
     };
   });
 

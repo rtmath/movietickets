@@ -1,3 +1,7 @@
-.pg13AndR, .gAndPG, #movieForm, #movieTimes, .error, .confirmation {
+.pg13AndR, .gAndPG, #movieForm, #movieTimes, .error, .confirmation, .discount {
   display: none;
+}
+
+.movieTitle {
+  font-style: italic;
 }

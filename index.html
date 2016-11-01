@@ -6,10 +6,13 @@
     <link href="css/styles.css" rel="stylesheet" type="text/css">
     <script src="js/jquery-3.1.1.js"></script>
     <script src="js/scripts.js"></script>
-    <title></title>
+    <title>Movie Tickets</title>
   </head>
   <body>
     <div class="container">
+      <div class="jumbotron">
+        <h1>Movie Tickets</h1>
+      </div>
       <div class="row">
         <div class="col-md-12">
           <form id="ageForm">
@@ -26,12 +29,13 @@
               <input type="time" id="hour" value="15:30:00" class="form-control">
             </div>
             <button type="submit" name="button" class="btn">Get Movie Times</button>
-            <p class="error">Please select a movie</p>
+            <p class="error error-null">Please select a movie</p>
+            <p class="error error-too-late">Please select an earlier show time (or go to bed...)</p>
           </form>
           <form id="movieTimes">
             <div>
               <p>Here are the movie times that are later than <span class="userTime"></span>:</p>
-              <select id="movieTimeList">
+              <select id="movieTimeList" class="form-control">
               </select>
             </div>
             <button type="submit" class="btn" id="enterTime">Buy Tickets</button>
@@ -42,6 +46,10 @@
         <div class="col-md-12 confirmation">
           <h2>Congratulations!</h2>
           <p>You purchased a ticket to see <span class="movieTitle"></span> at <span class="movieTime"></span>.  Your ticket was $<span class="ticketPrice"></span>.00.</p>
+          <br>
+          <span class="seniorDiscount discount">You got a senior discount.</span>
+          <span class="youthDiscount discount">You got a youth discount.</span>
+          <span class="matineeDiscount discount">You got a matinee discount.</span>
         </div>
       </div>
     </div>
